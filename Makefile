@@ -1,11 +1,16 @@
 # Thin wrappers around the docker / docker compose workflow.
 # Production-only: local development remains `npm run dev`.
 
-.PHONY: build up down logs clean
+.PHONY: build up down logs clean test
 
 # Build the production image from the repo Dockerfile.
 build:
 	docker build -t team-workspace .
+
+# Run the full test suite (Vitest, single run) — the same suite as
+# `npm run test`, including the axe-core accessibility assertions.
+test:
+	npm run test
 
 # Start the app (builds if needed) and serve at http://localhost:8080.
 up:
