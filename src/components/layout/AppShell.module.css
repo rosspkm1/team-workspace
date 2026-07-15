@@ -1,0 +1,78 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.skipLink {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  z-index: 300;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  text-decoration: none;
+  transition: top 120ms ease;
+}
+
+.skipLink:focus {
+  top: 0.5rem;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Persistent nav bar is visible on desktop and hidden on mobile (the drawer
+   takes over below the breakpoint). */
+@media (max-width: 767px) {
+  .barNav {
+    display: none;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background-color: var(--color-overlay);
+  border: 0;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 201;
+  width: min(20rem, 80vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--color-bg);
+  box-shadow: var(--shadow-drawer);
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The drawer is a mobile-only affordance. */
+@media (min-width: 768px) {
+  .overlay,
+  .drawer {
+    display: none;
+  }
+}
