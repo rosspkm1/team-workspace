@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { appName } from '@utils/appName';
+import { devLog } from '@utils/devLog';
+import { ROUTES } from '@config/routes';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { Button } from '@components/ui';
 import { Header } from './Header';
@@ -29,11 +31,26 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLElement>(null);
 
-  const closeDrawer = () => setDrawerOpen(false);
-  const toggleDrawer = () => setDrawerOpen((open) => !open);
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    devLog('Closed the mobile navigation menu');
+  };
+  const toggleDrawer = () => {
+    const willOpen = !isDrawerOpen;
+    setDrawerOpen(willOpen);
+    devLog(
+      willOpen ? 'Opened the mobile navigation menu' : 'Closed the mobile navigation menu',
+    );
+  };
 
   useEffect(() => {
     document.title = `${pageTitle} - ${appName}`;
+    // Confirm a successful navigation to a known page. Compared against the
+    // shared ROUTES source of truth (never a hardcoded list) so unknown routes
+    // such as NotFound — which are not a successful key action — stay silent.
+    if (ROUTES.some((route) => route.label === pageTitle)) {
+      devLog(`Navigated to the ${pageTitle} page`);
+    }
   }, [pageTitle]);
 
   // Trap keyboard focus inside the drawer while it is open.
