@@ -27,7 +27,7 @@ describe('AppShell navigation confirmations (AC4a / AC1 / AC2)', () => {
       // fails if navigation to a known route stops emitting a page-naming confirmation.
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
       renderShell(label);
-      expect(spy).toHaveBeenCalledWith(`Navigated to the ${label} page`);
+      expect(spy).toHaveBeenCalledWith(`[devlog] Navigated to the ${label} page`);
     },
   );
 
@@ -46,11 +46,13 @@ describe('AppShell navigation confirmations (AC4a / AC1 / AC2)', () => {
     rerenderTo('Projects');
     rerenderTo('Team');
 
-    const navCalls = spy.mock.calls.filter(([msg]) => String(msg).startsWith('Navigated to the'));
+    const navCalls = spy.mock.calls.filter(([msg]) =>
+      String(msg).includes('Navigated to the'),
+    );
     expect(navCalls).toEqual([
-      ['Navigated to the Dashboard page'],
-      ['Navigated to the Projects page'],
-      ['Navigated to the Team page'],
+      ['[devlog] Navigated to the Dashboard page'],
+      ['[devlog] Navigated to the Projects page'],
+      ['[devlog] Navigated to the Team page'],
     ]);
   });
 
@@ -58,7 +60,9 @@ describe('AppShell navigation confirmations (AC4a / AC1 / AC2)', () => {
     // fails if an unknown page title (not a successful key action) still emits a success message.
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     renderShell('Not found');
-    const navCalls = spy.mock.calls.filter(([msg]) => String(msg).startsWith('Navigated to the'));
+    const navCalls = spy.mock.calls.filter(([msg]) =>
+      String(msg).includes('Navigated to the'),
+    );
     expect(navCalls).toEqual([]);
   });
 });
@@ -69,7 +73,7 @@ describe('AppShell drawer confirmations (AC4b / AC4c / AC2)', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     renderShell();
     await userEvent.click(screen.getByRole('button', { name: /open navigation menu/i }));
-    expect(spy).toHaveBeenCalledWith('Opened the mobile navigation menu');
+    expect(spy).toHaveBeenCalledWith('[devlog] Opened the mobile navigation menu');
   });
 
   it('logs a "closed" confirmation when the drawer is closed via the Close button', async () => {
@@ -79,7 +83,7 @@ describe('AppShell drawer confirmations (AC4b / AC4c / AC2)', () => {
     await userEvent.click(screen.getByRole('button', { name: /open navigation menu/i }));
     const dialog = screen.getByRole('dialog', { name: 'Navigation menu' });
     await userEvent.click(within(dialog).getByRole('button', { name: /close navigation menu/i }));
-    expect(spy).toHaveBeenCalledWith('Closed the mobile navigation menu');
+    expect(spy).toHaveBeenCalledWith('[devlog] Closed the mobile navigation menu');
   });
 
   it('logs a "closed" confirmation when the drawer is closed via Escape', async () => {
@@ -88,7 +92,7 @@ describe('AppShell drawer confirmations (AC4b / AC4c / AC2)', () => {
     renderShell();
     await userEvent.click(screen.getByRole('button', { name: /open navigation menu/i }));
     await userEvent.keyboard('{Escape}');
-    expect(spy).toHaveBeenCalledWith('Closed the mobile navigation menu');
+    expect(spy).toHaveBeenCalledWith('[devlog] Closed the mobile navigation menu');
   });
 });
 
@@ -111,7 +115,7 @@ describe('AppShell logging has no effect on rendered output (AC5 substrate)', ()
     const { container } = renderShell('Dashboard');
     const domWithLogging = container.innerHTML;
     // logging actually fired in the dev case (guards against a no-op comparison).
-    expect(spy).toHaveBeenCalledWith('Navigated to the Dashboard page');
+    expect(spy).toHaveBeenCalledWith('[devlog] Navigated to the Dashboard page');
     cleanup();
 
     vi.stubEnv('DEV', false);

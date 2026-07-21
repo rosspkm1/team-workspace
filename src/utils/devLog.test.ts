@@ -12,16 +12,26 @@ describe('devLog dev-mode logging (AC1 / AC2)', () => {
     // (import.meta.env.DEV is true by default under vitest.)
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     devLog('Navigated to the Projects page');
-    expect(spy).toHaveBeenCalledWith('Navigated to the Projects page');
+    expect(spy).toHaveBeenCalledWith('[devlog] Navigated to the Projects page');
   });
 
-  it('forwards the exact message string it is given (does not rewrite it to a generic string)', () => {
+  it('carries the caller\'s descriptive message verbatim, only prefixed (does not rewrite it to a generic string)', () => {
     // fails if devLog swallows or replaces the caller's descriptive message (AC2).
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     devLog('Opened the mobile navigation menu');
     devLog('Closed the mobile navigation menu');
-    expect(spy).toHaveBeenNthCalledWith(1, 'Opened the mobile navigation menu');
-    expect(spy).toHaveBeenNthCalledWith(2, 'Closed the mobile navigation menu');
+    expect(spy).toHaveBeenNthCalledWith(1, '[devlog] Opened the mobile navigation menu');
+    expect(spy).toHaveBeenNthCalledWith(2, '[devlog] Closed the mobile navigation menu');
+  });
+
+  it('prefixes the output with "[devlog] " so confirmations are filterable in a busy console', () => {
+    // fails if the filterable [devlog] prefix (requested in PR review) is dropped.
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    devLog('Navigated to the Dashboard page');
+    const [message] = spy.mock.calls[0]!;
+    expect(String(message)).toMatch(/^\[devlog] /);
+    // the original message is still present after the prefix, not replaced.
+    expect(String(message)).toContain('Navigated to the Dashboard page');
   });
 });
 
