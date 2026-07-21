@@ -27,6 +27,6 @@
  */
 export function devLog(message: string): void {
   if (import.meta.env.DEV) {
-    console.log(message);
+    console.log(`[devlog] ${message}`);
   }
 }
