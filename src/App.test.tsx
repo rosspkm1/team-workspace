@@ -48,10 +48,11 @@ describe('App route rendering (AC1)', () => {
   });
 
   it('renders Team at "/team"', async () => {
-    // fails if "/team" no longer resolves to the Team page.
+    // fails if "/team" no longer resolves to the Team page, or if the Team
+    // heading's accessible name no longer carries the member count (RMIN-103).
     renderApp('/team');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Team' }),
+      await screen.findByRole('heading', { level: 1, name: 'Team (0)' }),
     ).toBeInTheDocument();
   });
 });
