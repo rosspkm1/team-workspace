@@ -1,0 +1,4 @@
+.fallback {
+  padding: 1rem;
+  color: var(--color-text-muted);
+}
