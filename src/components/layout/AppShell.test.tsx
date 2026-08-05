@@ -52,13 +52,13 @@ describe('AppShell document.title (AC9)', () => {
   it('sets document.title to "[pageTitle] - Team Workspace"', () => {
     // fails if the useEffect no longer composes the title from pageTitle + app name.
     renderShell('Dashboard');
-    expect(document.title).toBe('Dashboard - Team Workspace');
+    expect(document.title).toBe('Dashboard · Team Workspace');
   });
 
   it('updates document.title when pageTitle changes', () => {
     // fails if the title effect is not keyed on pageTitle and goes stale.
     const { rerender } = renderShell('Dashboard');
-    expect(document.title).toBe('Dashboard - Team Workspace');
+    expect(document.title).toBe('Dashboard · Team Workspace');
     rerender(
       <MemoryRouter>
         <AppShell pageTitle="Projects">
@@ -66,7 +66,7 @@ describe('AppShell document.title (AC9)', () => {
         </AppShell>
       </MemoryRouter>,
     );
-    expect(document.title).toBe('Projects - Team Workspace');
+    expect(document.title).toBe('Projects · Team Workspace');
   });
 });
 

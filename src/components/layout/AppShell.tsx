@@ -11,7 +11,7 @@ const DRAWER_ID = 'mobile-nav-drawer';
 
 export interface AppShellProps {
   /**
-   * Drives document.title, which is set to `${pageTitle} - Team Workspace`
+   * Drives document.title, which is set to `${pageTitle} · Team Workspace`
    * whenever this value changes.
    */
   pageTitle: string;
@@ -34,7 +34,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
   const toggleDrawer = () => setDrawerOpen((open) => !open);
 
   useEffect(() => {
-    document.title = `${pageTitle} - ${appName}`;
+    document.title = `${pageTitle} · ${appName}`;
   }, [pageTitle]);
 
   // Trap keyboard focus inside the drawer while it is open.
