@@ -58,14 +58,14 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
   return (
     <div className={styles.shell}>
       <a className={styles.skipLink} href="#main-content">
-        Skip to content
+        Skip to main content
       </a>
 
       <Header isDrawerOpen={isDrawerOpen} onToggleDrawer={toggleDrawer} drawerId={DRAWER_ID} />
 
       <Nav variant="bar" className={styles.barNav} />
 
-      <main id="main-content" ref={mainRef} className={styles.main}>
+      <main id="main-content" ref={mainRef} tabIndex={-1} className={styles.main}>
         {children}
       </main>
 
