@@ -68,6 +68,22 @@ describe('App unknown-route fallback (AC2)', () => {
   });
 });
 
+describe('App footer presence across routes (RMIN-135 AC1)', () => {
+  // The footer lives in AppShell, outside <Routes>, so it must appear on every
+  // route including the unknown-path (404) fallback.
+  it.each(['/', '/projects', '/team', '/nope'])(
+    'renders a contentinfo footer on %s',
+    async (path) => {
+      // fails if the footer is missing from a route, or is no longer a
+      // contentinfo landmark carrying the app name.
+      renderApp(path);
+      // Wait for the code-split page to resolve so the shell is fully rendered.
+      await screen.findByRole('heading', { level: 1 });
+      expect(screen.getByRole('contentinfo')).toHaveTextContent('Team Workspace');
+    },
+  );
+});
+
 describe('App accessibility (AC6)', () => {
   it('has no critical/serious violations once a page has resolved', async () => {
     // fails if a resolved route + app shell regresses into a critical/serious

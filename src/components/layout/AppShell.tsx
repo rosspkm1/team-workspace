@@ -4,6 +4,7 @@ import { useFocusTrap } from '@hooks/useFocusTrap';
 import { Button } from '@components/ui';
 import { Header } from './Header';
 import { Nav } from './Nav';
+import { Footer } from './Footer';
 import styles from './AppShell.module.css';
 
 const DRAWER_ID = 'mobile-nav-drawer';
@@ -68,6 +69,8 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
       <main id="main-content" ref={mainRef} className={styles.main}>
         {children}
       </main>
+
+      <Footer />
 
       {isDrawerOpen && (
         <>
