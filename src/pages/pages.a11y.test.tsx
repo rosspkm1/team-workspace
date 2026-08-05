@@ -1,6 +1,8 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
+import { MEMBERS } from '@utils/members';
 import DashboardPage from '@pages/DashboardPage';
 import ProjectsPage from '@pages/ProjectsPage';
 import TeamPage from '@pages/TeamPage';
@@ -37,8 +39,23 @@ describe('Page axe audit (AC2)', () => {
   });
 
   it('TeamPage has no critical/serious violations', async () => {
-    // fails if the Team page regresses into a critical/serious defect.
+    // fails if the Team page regresses into a critical/serious defect (this is
+    // the RMIN-132 no-selection state — placeholder detail panel showing).
     const { container } = render(<TeamPage />);
+    await expectNoSeriousViolations(container);
+  });
+
+  it('TeamPage has no critical/serious violations with a member selected (RMIN-132 AC3)', async () => {
+    // fails if the member-selected state (detail panel populated with the
+    // selected member's record) introduces a critical/serious a11y defect.
+    const { container } = render(<TeamPage />);
+    const first = MEMBERS[0];
+    if (!first) throw new Error('test fixture: MEMBERS seed is empty');
+
+    await userEvent.click(
+      screen.getByRole('button', { name: new RegExp(first.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) }),
+    );
+
     await expectNoSeriousViolations(container);
   });
 
