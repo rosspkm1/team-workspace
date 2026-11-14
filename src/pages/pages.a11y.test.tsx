@@ -7,6 +7,7 @@ import DashboardPage from '@pages/DashboardPage';
 import ProjectsPage from '@pages/ProjectsPage';
 import TeamPage from '@pages/TeamPage';
 import NotFoundPage from '@pages/NotFoundPage';
+import SettingsPage from '@pages/SettingsPage';
 import HelpPage from '@pages/HelpPage';
 
 afterEach(() => {
@@ -60,6 +61,12 @@ describe('Page axe audit (AC2)', () => {
     await expectNoSeriousViolations(container);
   });
 
+  it('SettingsPage has no critical/serious violations', async () => {
+    // fails if the Settings placeholder page regresses into a critical/serious defect.
+    const { container } = render(<SettingsPage />);
+    await expectNoSeriousViolations(container);
+  });
+
   it('NotFoundPage has no critical/serious violations', async () => {
     // fails if the 404 page regresses into a critical/serious defect.
     const { container } = render(<NotFoundPage />);
@@ -86,6 +93,36 @@ describe('NotFoundPage keyboard/SR substrate (AC5)', () => {
     // aria-labelledby; getByRole('region', {name}) resolves the association.
     const region = screen.getByRole('region', { name: 'Page not found' });
     expect(region).toContainElement(heading);
+  });
+});
+
+describe('SettingsPage structure', () => {
+  it('renders an h1 "Settings" with id settings-heading that names its region', () => {
+    // fails if the heading text or id changes, or the section's aria-labelledby
+    // no longer points at the h1 so the region loses its "Settings" name.
+    render(<SettingsPage />);
+
+    const heading = screen.getByRole('heading', { level: 1, name: 'Settings' });
+    expect(heading).toHaveAttribute('id', 'settings-heading');
+
+    const region = screen.getByRole('region', { name: 'Settings' });
+    expect(region).toContainElement(heading);
+  });
+
+  it('renders exactly one non-empty paragraph of placeholder copy after the heading', () => {
+    // fails if the paragraph is removed, duplicated, emptied, or moved before the h1.
+    render(<SettingsPage />);
+
+    const region = screen.getByRole('region', { name: 'Settings' });
+    const heading = screen.getByRole('heading', { level: 1, name: 'Settings' });
+    const paragraphs = region.querySelectorAll('p');
+    expect(paragraphs).toHaveLength(1);
+    const paragraph = paragraphs[0]!;
+
+    expect(paragraph.textContent?.trim()).not.toBe('');
+    expect(
+      heading.compareDocumentPosition(paragraph) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });
 

@@ -57,6 +57,33 @@ describe('App route rendering (AC1)', () => {
   });
 });
 
+describe('App Settings route', () => {
+  it('renders Settings at "/settings" instead of the 404 fallback', async () => {
+    // fails if "/settings" no longer resolves to SettingsPage (ROUTES entry or
+    // lazy import missing) and falls through to NotFoundPage.
+    renderApp('/settings');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Settings' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Page not found' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders a "Settings" nav link to /settings marked as the current page', async () => {
+    // fails if the nav loses the Settings link, points it elsewhere, or does not
+    // mark it active while on /settings.
+    renderApp('/settings');
+    await screen.findByRole('heading', { level: 1, name: 'Settings' });
+    const links = screen.getAllByRole('link', { name: 'Settings' });
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link).toHaveAttribute('href', '/settings');
+      expect(link).toHaveAttribute('aria-current', 'page');
+    }
+  });
+});
+
 describe('App Help route', () => {
   it('renders the Help page at "/help" instead of the 404 page', async () => {
     // fails if "/help" is not wired into the router (falls through to the
