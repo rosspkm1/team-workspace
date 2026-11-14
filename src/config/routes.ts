@@ -29,4 +29,5 @@ export const ROUTES: readonly RouteEntry[] = [
   { path: '/', label: 'Dashboard', Component: lazy(() => import('@pages/DashboardPage')) },
   { path: '/projects', label: 'Projects', Component: lazy(() => import('@pages/ProjectsPage')) },
   { path: '/team', label: 'Team', Component: lazy(() => import('@pages/TeamPage')) },
+  { path: '/help', label: 'Help', Component: lazy(() => import('@pages/HelpPage')) },
 ];
