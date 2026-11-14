@@ -7,6 +7,7 @@ import DashboardPage from '@pages/DashboardPage';
 import ProjectsPage from '@pages/ProjectsPage';
 import TeamPage from '@pages/TeamPage';
 import NotFoundPage from '@pages/NotFoundPage';
+import HelpPage from '@pages/HelpPage';
 
 afterEach(() => {
   cleanup();
@@ -64,6 +65,12 @@ describe('Page axe audit (AC2)', () => {
     const { container } = render(<NotFoundPage />);
     await expectNoSeriousViolations(container);
   });
+
+  it('HelpPage has no critical/serious violations', async () => {
+    // fails if the Help page regresses into a critical/serious defect.
+    const { container } = render(<HelpPage />);
+    await expectNoSeriousViolations(container);
+  });
 });
 
 describe('NotFoundPage keyboard/SR substrate (AC5)', () => {
@@ -79,5 +86,34 @@ describe('NotFoundPage keyboard/SR substrate (AC5)', () => {
     // aria-labelledby; getByRole('region', {name}) resolves the association.
     const region = screen.getByRole('region', { name: 'Page not found' });
     expect(region).toContainElement(heading);
+  });
+});
+
+describe('HelpPage structure', () => {
+  it('renders an h1 "Help" that labels its region', () => {
+    // fails if the Help heading text changes or the section's aria-labelledby
+    // no longer points at the h1 — i.e. the region loses its accessible name.
+    render(<HelpPage />);
+
+    const heading = screen.getByRole('heading', { level: 1, name: 'Help' });
+    const region = screen.getByRole('region', { name: 'Help' });
+    expect(region).toContainElement(heading);
+  });
+
+  it('renders exactly one non-empty paragraph of placeholder copy after the heading', () => {
+    // fails if the placeholder paragraph is missing, duplicated, empty, or
+    // placed before the heading.
+    render(<HelpPage />);
+
+    const region = screen.getByRole('region', { name: 'Help' });
+    const paragraphs = region.querySelectorAll('p');
+    expect(paragraphs).toHaveLength(1);
+    const paragraph = paragraphs[0]!;
+    expect(paragraph.textContent?.trim()).not.toBe('');
+
+    const heading = screen.getByRole('heading', { level: 1, name: 'Help' });
+    expect(
+      heading.compareDocumentPosition(paragraph) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

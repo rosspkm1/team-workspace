@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { axe } from 'vitest-axe';
@@ -54,6 +54,31 @@ describe('App route rendering (AC1)', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Team (0)' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('App Help route', () => {
+  it('renders the Help page at "/help" instead of the 404 page', async () => {
+    // fails if "/help" is not wired into the router (falls through to the
+    // catch-all) or the Help page's h1 is missing or renamed.
+    renderApp('/help');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Help' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Page not found' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows a "Help" link to "/help" in the primary navigation', async () => {
+    // fails if the Help route has no nav entry or the link points elsewhere.
+    renderApp('/help');
+    await screen.findByRole('heading', { level: 1, name: 'Help' });
+    const nav = screen.getByRole('navigation', { name: 'Primary' });
+    expect(within(nav).getByRole('link', { name: 'Help' })).toHaveAttribute(
+      'href',
+      '/help',
+    );
   });
 });
 
